@@ -540,7 +540,9 @@ RANDOM = (15, 25, 144)
 RED = (255,0, 0)
 GREEN = (21,180,0)
 
-WIN_SIZE = 500
+WIN_WIDTH = 440
+WIN_HEIGHT = 500
+
 
 pygame.init()
 
@@ -549,7 +551,7 @@ wildFireGraph = {}
 
 mylist = []
 
-for i in range(0,125):
+for i in range(0,75):
     x = random.randint(1,153)
     mylist.append(x)
 
@@ -575,7 +577,7 @@ class Fire:
 
  
 # Set the width and height of the screen [width, height]
-size = (WIN_SIZE, WIN_SIZE)
+size = (WIN_WIDTH, WIN_HEIGHT)
 screen = pygame.display.set_mode(size)
 
 # Add a title
@@ -591,47 +593,46 @@ clock = pygame.time.Clock()
 
 
 
-c = 100
-w=0
-x=10
-y=10
+
 generation = 1
 
-while y < WIN_SIZE-10:
-
-    if w in [mylist]:
-        fire = Fire(w, screen, WHITE,x,y,20,20,1)
-        wildfire.append(fire)
-
-    else:
-        fire = Fire(w, screen, WHITE,x,y,20,20,0)
-        wildfire.append(fire)
 
 
-    x = x + 35
 
-    w +=1
+def start():
+    w=0
+    x=10
+    y=10
+    wildfire = []
+    while y < WIN_HEIGHT-10:
 
+        if w in [5,6,15,16,17]:
+            fire = Fire(w, screen, WHITE,x,y,20,20,1)
+            wildfire.append(fire)
 
-    if x >=381:
-        y = y + 35
-        
-        if y%2 == 0:
-            x = 10
         else:
-            x = 27
+            fire = Fire(w, screen, WHITE,x,y,20,20,0)
+            wildfire.append(fire)
 
 
+        x = x + 35
 
-status = []
-print('mylist', mylist)
-for i in range(0,len(wildfire)):
-    if i in mylist:
-        status.append(1)
-    else:
-        status.append(0)
+        w +=1
 
-status2 = status[:]
+
+        if x >=381:
+            y = y + 35
+            
+            if y%2 == 0:
+                x = 10
+            else:
+                x = 27
+    
+    return wildfire
+
+
+wildfire = start()
+wildfire2 = wildfire[:]
 
 for item in wildfire:
 
@@ -670,7 +671,7 @@ def dft(before, after):
     depth = Stack()
     visited = []
     fires_burning = 0
-    depth.push(0)
+    depth.push(100)
 
     while depth.size():
         node = depth.pop()
@@ -682,19 +683,19 @@ def dft(before, after):
                 depth.push(neighbor)
 
         for neighbor in wildFireGraph[node]:
-            if before[neighbor] == 1:
+            if before[neighbor].status == 1:
                 fires_burning+=1
 
-        if before[node] == 1:
-            if fires_burning in [2,3]:
-                after[node] = 1
+        if before[node].status == 1:
+            if fires_burning == [2,3]:
+                after[node].status = 1
             else:
-                after[node] = 0
+                after[node].status = 0
         else:
             if fires_burning == 3:
-                after[node] = 1
+                after[node].status = 1
             else:
-                after[node] = 0
+                after[node].status = 0
         fires_burning = 0         
 
 
@@ -726,7 +727,7 @@ while not done:
     # --- Go ahead and update the screen with what we've drawn.
  
     # --- Limit to 5 frames per second
-    clock.tick(5)
+    clock.tick(0.1)
 
 
 
@@ -734,19 +735,23 @@ while not done:
             
 
     if generation > 1:
-        status = dft(status,status2)    
+        # if wildfire == dft(wildfire,wildfire2):
+        #     wildfire = start()
+        #     generation = 1
+
+        # else:
+        wildfire = dft(wildfire,wildfire2)    
 
 
 
 
-    for i in range(0,len(status)):
-        if status[i] == 1:
-            wildfire[i].createFire(RED)
+    for fire in wildfire:
+        if fire.status == 1:
+           fire.createFire(RED)
         else:
-            wildfire[i].createFire(GREEN)
+            fire.createFire(GREEN)
     
-    
-    status2 = status[:]
+    wildfire2 = wildfire[:]
 
     pygame.display.flip()
 
