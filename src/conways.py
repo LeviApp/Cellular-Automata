@@ -502,7 +502,7 @@
 
 
 
-import pygame, random
+import pygame, random, json
  
 # Define some colors and other constants
 
@@ -539,7 +539,7 @@ GRAY = (125, 25, 25)
 RANDOM = (15, 25, 144)
 RED = (255,0, 0)
 GREEN = (21,180,0)
-
+YELLOW = (255,255,0)
 WIN_W = 1250
 WIN_H = 700
 
@@ -555,7 +555,6 @@ for i in range(0,125):
     mylist.append(x)
 
 mylist = list(set(mylist))
-print('mylist', mylist)
 
 class Fire:
     def __init__(self, ID, place, color, horizontal, vertical, width, height):
@@ -619,13 +618,11 @@ while y < WIN_H-10:
 
 fiery_start = []
 
-for i in range(0, 301):
+for i in range(0, 651):
     fiery_start.append(random.randint(0,699))
-    print(random.randint(0,699))
 
 fiery_start = list(set(fiery_start))
 
-print('fire', fiery_start)
 
 def start():
     status = []
@@ -638,7 +635,8 @@ def start():
 
 status = start()
 status2 = status[:]
-
+lineage = [status]
+lineage_last = False
 row_count = 35
 row_minus = 34
 row_plus = 36
@@ -677,12 +675,11 @@ def dft(before, after):
     Print each vertex in depth-first order
     beginning from starting_vertex.
     """
-
+    global lineage_last
     depth = Stack()
     visited = []
     fires_burning = 0
     depth.push(0)
-
     while depth.size():
         node = depth.pop()
         visited.append(node)
@@ -708,6 +705,9 @@ def dft(before, after):
                 after[node] = 0
         fires_burning = 0         
 
+    lineage.append(after)
+    if status == status2 and generation != 1:
+        lineage_last = True
 
     return after
 
@@ -737,25 +737,29 @@ while not done:
     # --- Go ahead and update the screen with what we've drawn.
  
     # --- Limit to 5 frames per second
-    clock.tick(1)
+    clock.tick(10)
 
 
 
 
             
 
-    # if generation > 1:
-    #     status = dft(status,status2)    
-
-
+    if (generation > 1 and lineage_last == False) or (generation == 1) :
+        status = dft(status,status2)
+    
+    else:
+        status = start()
+        status2 = status[:]
+        generation = 1
+        lineage_last = False
 
     for i in range(0,len(status)):
         if status[i] == 1:
-            wildfire[i].createFire(RED)
+            wildfire[i].createFire(YELLOW)
         else:
-            wildfire[i].createFire(GREEN)
+            wildfire[i].createFire(BLACK)
     
-    
+
     status2 = status[:]
 
     pygame.display.flip()
@@ -764,8 +768,12 @@ while not done:
     generation +=1
 
    
+    if [1,2] == [1, 2]:
+        pygame.display.set_caption(f'Generation {generation}')
 
-    pygame.display.set_caption(f'Generation {generation}')
+    else:
+        pygame.display.set_caption(f'Generation X')
+
 
 
     
