@@ -1,506 +1,3 @@
-# import pygame, random
- 
-# import json
-# # Define some colors and other constants
-
-# class Queue():
-#     def __init__(self):
-#         self.queue = []
-#     def enqueue(self, value):
-#         self.queue.append(value)
-#     def dequeue(self):
-#         if self.size() > 0:
-#             return self.queue.pop(0)
-#         else:
-#             return None
-#     def size(self):
-#         return len(self.queue)
-
-
-# class Stack():
-#     def __init__(self):
-#         self.stack = []
-#     def push(self, value):
-#         self.stack.append(value)
-#     def pop(self):
-#         if self.size() > 0:
-#             return self.stack.pop()
-#         else:
-#             return None
-#     def size(self):
-#         return len(self.stack)
-
-# BLACK = (0, 0, 0)
-# WHITE = (255, 255, 255)
-# GRAY = (125, 25, 25)
-# RANDOM = (15, 25, 144)
-# RED = (255,0, 0)
-# GREEN = (21,180,0)
-
-# WIN_SIZE = 500
-
-# pygame.init()
-
-# wildfire = []
-# wildFireGraph = {}
-# shortest_path = []
-
-# class Fire:
-#     def __init__(self, ID, place, color, horizontal, vertical, width, height):
-#         self.ID = ID
-#         self.place = place
-#         self.color = color
-#         self.horizontal = horizontal
-#         self.vertical = vertical
-#         self.width = width
-#         self.height = height
-
-#     def __str__(self):
-#         return f'ID: {self.ID}, status: {self.status}'
-        
-#     def createFire(self, COLOR):
-#         pygame.draw.ellipse(self.place, COLOR, pygame.Rect(self.horizontal,self.vertical,self.width,self.height))
-
-
- 
-# # Set the width and height of the screen [width, height]
-# size = (WIN_SIZE, WIN_SIZE)
-# screen = pygame.display.set_mode(size)
-
-# # Add a title
-# pygame.display.set_caption("Conway's Game of Life")
- 
-# # Loop until the user clicks the close button.
-# done = False
- 
-# # Used to manage how fast the screen updates
-# clock = pygame.time.Clock()
- 
-
-
-
-
-# c = 100
-# w=0
-# x=10
-# y=10
-# generation = 1
-
-# while y < WIN_SIZE-10:
-
-#     fire = Fire(w, screen, WHITE,x,y,20,20)
-#     wildfire.append(fire)
-
-
-
-#     x = x + 35
-
-#     w +=1
-
-
-#     if x >=381:
-#         y = y + 35
-        
-#         if y%2 == 0:
-#             x = 10
-#         else:
-#             x = 27
-
-
-
-
-
-# status = []
-
-# for i in range(0,len(wildfire)):
-#     if i in [0,1,2,3,4,5,6,7,8,9,10]:
-#         status.append(1)
-#     else:
-#         status.append(0)
-
-
-# def new_generation(s, array):
-
-#     for i in range(0, len(s)):
-#         if i == 0:
-#             if s[i] == 1:
-#                 fires_burning = [s[i+1], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-#                 if len(fires_burning) == 2:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#         elif i == 10:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) >= 2:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i == 143:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i+1], s[i-10], s[i-11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if fires_burning >= 2:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i+1], s[i-10], s[i-11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i == 153:
-
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i-11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 2:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i > 0 and i < 10:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i > 143 and i < 153:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-10], s[i-11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-10], s[i-11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i%11 == 0 and i%2 != 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i+1], s[i-10], s[i-11], s[i+11], s[i+12]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i+1], s[i-10], s[i-11], s[i+11], s[i+12]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif i%11 == 0 and i%2 == 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i+1], s[i-11], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i+1], s[i-11], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif (i+1)%11 == 0 and (i+1)%2 != 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i-11], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i-11], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif (i+1)%11 == 0 and (i+1)%2 == 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif (i+1)%11 == 0 and (i+1)%2 == 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         elif array[i].vertical%2 == 0:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-12], s[i-11], s[i+10], s[i+11]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-
-#         else:
-#             if s[i] == 1:
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-11], s[i-10], s[i+11], s[i+12]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) in [2,3]:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#             if s[i] == 0:  
-                
-#                 fires_burning = [s[i-1], s[i+1], s[i-11], s[i-10], s[i+11], s[i+12]]
-#                 fires_burning = [item for item in s if item == 1]
-
-#                 if len(fires_burning) == 3:
-#                     s[i] = 1
-#                 else:
-#                     s[i] = 0
-#     print(s)
-#     return s
-
-
-
-# # -------- Main Program Loop -----------
-# while not done:
-#     # --- Main event loop
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             done = True
- 
-#     # --- Game logic should go here
-    
-
-    
-#     # --- Screen-clearing code goes here
- 
-#     # Here, we clear the screen to gray. Don't put other drawing commands
-#     # above this, or they will be erased with this command.
-#     screen.fill(BLACK)
- 
-#     # --- Drawing code should go here
-
-  
-    
-
-#     # --- Go ahead and update the screen with what we've drawn.
- 
-#     # --- Limit to 5 frames per second
-#     clock.tick(1)
-
-#     # if generation > 1:
-#     #     wildfire = new_generation(wildfire,wildfire2)
-#     print(status)
-#     status = new_generation(status, wildfire)     
-#     print(status)
-#     for i in range(0,len(status)):
-#         if status[i] == 1:
-#             wildfire[i].createFire(RED)
-        
-#         else:
-#             wildfire[i].createFire(GREEN)
-
-#     generation +=1
-
-#     pygame.display.flip()
-
-
-
-#     # shortest_path = dfs(0,6)
-
-
-    
-    
-#      # Close the window and quit.
-# pygame.quit()
-#         # {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import pygame, random, json
  
@@ -597,7 +94,7 @@ x=10
 y=10
 generation = 1
 
-while y < WIN_H-10:
+while y < WIN_H-60:
 
     fire = Fire(w, screen, WHITE,x,y,20,20)
     wildfire.append(fire)
@@ -618,8 +115,8 @@ while y < WIN_H-10:
 
 fiery_start = []
 
-for i in range(0, 651):
-    fiery_start.append(random.randint(0,699))
+for i in range(0, 301):
+    fiery_start.append(random.randint(0,629))
 
 fiery_start = list(set(fiery_start))
 
@@ -640,8 +137,8 @@ lineage_last = False
 row_count = 35
 row_minus = 34
 row_plus = 36
-circle_total = 699
-circle_startend = 665
+circle_total = 629
+circle_startend = 595
 
 for item in wildfire:
 
@@ -752,6 +249,51 @@ while not done:
         status2 = status[:]
         generation = 1
         lineage_last = False
+    
+
+
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(22,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(25,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Restart', 1, YELLOW)
+    screen.blit(text, (50,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(222,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(225,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Rewind', 1, YELLOW)
+    screen.blit(text, (250,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(422,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(425,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Loop', 1, YELLOW)
+    screen.blit(text, (450,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(622,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(625,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Pause', 1, YELLOW)
+    screen.blit(text, (650,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Speed   -   +', 1, YELLOW)
+    screen.blit(text, (850,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render(f'Generation: {generation}', 1, YELLOW)
+    screen.blit(text, (1050,655))
 
     for i in range(0,len(status)):
         if status[i] == 1:
