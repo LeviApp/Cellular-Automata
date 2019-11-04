@@ -234,7 +234,9 @@ while not done:
     # --- Go ahead and update the screen with what we've drawn.
  
     # --- Limit to 5 frames per second
-    clock.tick(10)
+
+    s = 1
+    clock.tick(s)
 
 
 
@@ -281,12 +283,26 @@ while not done:
     text = font.render('Pause', 1, YELLOW)
     screen.blit(text, (650,655))
 
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,200,40))
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,106,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,100,40))
 
     font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Speed   -   +', 1, YELLOW)
-    screen.blit(text, (850,655))
+    text = font.render('Speed', 1, YELLOW)
+    screen.blit(text, (840,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(922,647,51,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(925,650,45,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('-', 1, YELLOW)
+    screen.blit(text, (940,655))
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(972,647,51,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(975,650,45,40))
+
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('+', 1, YELLOW)
+    screen.blit(text, (990,655))
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
