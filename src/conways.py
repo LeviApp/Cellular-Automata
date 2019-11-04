@@ -208,6 +208,7 @@ def dft(before, after):
 
     return after
 
+s = 5
 
 # -------- Main Program Loop -----------
 while not done:
@@ -228,7 +229,6 @@ while not done:
  
     # --- Drawing code should go here
 
-    mouse = pygame.mouse.get_pos()
 
 
 
@@ -236,7 +236,6 @@ while not done:
  
     # --- Limit to 5 frames per second
 
-    s = 10
     clock.tick(s)
 
 
@@ -253,28 +252,45 @@ while not done:
         generation = 1
         lineage_last = False
     
+    def speed_up():
+        global s
+        if s < 20 and s >=1:
+            s+=1
+            print('this is s fast', s)
+        elif s < 1:
+            s = round(s + 0.1, 1)
+            print('this is s fast below 1', s)
 
-    if 972 + 51 > mouse[0] > 972 and 647 + 46 > mouse[1] > 647:
-        pygame.draw.rect(screen, BLACK, pygame.Rect(972,647,51,46))
-        pygame.draw.rect(screen, YELLOW, pygame.Rect(975,650,45,40))
-        font = pygame.font.SysFont("Arial", 25)
-        text = font.render('+', 1, BLACK)
-        screen.blit(text, (990,655))
+        else:
+            s = 20
+    
 
-    else:
-        pygame.draw.rect(screen, YELLOW, pygame.Rect(972,647,51,46))
-        pygame.draw.rect(screen, BLACK, pygame.Rect(975,650,45,40))
-        font = pygame.font.SysFont("Arial", 25)
-        text = font.render('+', 1, YELLOW)
-        screen.blit(text, (990,655))
+    def slow_down():
+        global s
+        if s >= 2:
+            s-=1
+            print('this is s slow', s)
+        
+        elif s >= 0.3 and s <= 1:
+            s = round(s - 0.1, 1)
+            print('this is s really slow', s)
+        
+        else:
+            s = 0.2
 
-    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3, txt):
+
+    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
         if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1:
             pygame.draw.rect(screen, BLACK, pygame.Rect(x1,y1,w1,h1))
             pygame.draw.rect(screen, YELLOW, pygame.Rect(x2,y2,w2,h2))
             font = pygame.font.SysFont("Arial", 25)
             text = font.render(txt, 1, BLACK)
             screen.blit(text, (x3,y3))
+            if click[0] == 1 and action != None:
+                action()
+                
 
         else:
             pygame.draw.rect(screen, YELLOW, pygame.Rect(x1,y1,w1,h1))
@@ -294,8 +310,8 @@ while not done:
     text = font.render('Speed', 1, YELLOW)
     screen.blit(text, (840,655))
 
-    button_func(922,647,51,46,925,650,45,40,940,655, '-')
-    button_func(972,647,51,46,975,650,45,40,990,655, '+')
+    button_func(922,647,51,46,925,650,45,40,940,655, '-', slow_down)
+    button_func(972,647,51,46,975,650,45,40,990,655, '+', speed_up)
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
