@@ -93,6 +93,7 @@ w=0
 x=10
 y=10
 generation = 1
+last_generation = 1
 
 while y < WIN_H-60:
 
@@ -209,6 +210,7 @@ def dft(before, after):
     return after
 
 s = 5
+looping = False
 
 # -------- Main Program Loop -----------
 while not done:
@@ -236,30 +238,12 @@ while not done:
  
     # --- Limit to 5 frames per second
 
-    clock.tick(s)
-
-
-
-
-            
-
-    if (generation > 1 and lineage_last == False) or (generation == 1) :
-        status = dft(status,status2)
-    
-    else:
-        status = start()
-        status2 = status[:]
-        generation = 1
-        lineage_last = False
-    
     def speed_up():
         global s
         if s < 20 and s >=1:
             s+=1
-            print('this is s fast', s)
         elif s < 1:
             s = round(s + 0.1, 1)
-            print('this is s fast below 1', s)
 
         else:
             s = 20
@@ -269,14 +253,23 @@ while not done:
         global s
         if s >= 2:
             s-=1
-            print('this is s slow', s)
         
         elif s >= 0.3 and s <= 1:
             s = round(s - 0.1, 1)
-            print('this is s really slow', s)
         
         else:
             s = 0.2
+
+
+    def restart():
+        global status, status2, generation, lineage_last
+        status = start()
+        status2 = status[:]
+        generation = 1
+        lineage_last = False
+    
+
+
 
 
     def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None):
@@ -289,6 +282,7 @@ while not done:
             text = font.render(txt, 1, BLACK)
             screen.blit(text, (x3,y3))
             if click[0] == 1 and action != None:
+                clock.tick(10)
                 action()
                 
 
@@ -299,7 +293,7 @@ while not done:
             text = font.render(txt, 1, YELLOW)
             screen.blit(text, (x3,y3))
     
-    button_func(22,647,206,46,25,650,200,40,50,655, 'Restart')
+    button_func(22,647,206,46,25,650,200,40,50,655, 'Restart', restart)
     button_func(222,647,206,46,225,650,200,40,250,655, 'Rewind')
     button_func(422,647,206,46,425,650,200,40,450,655, 'Loop')
     button_func(622,647,206,46,625,650,200,40,650,655, 'Pause')
@@ -317,7 +311,24 @@ while not done:
     pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
     font = pygame.font.SysFont("Arial", 25)
     text = font.render(f'Generation: {generation}', 1, YELLOW)
-    screen.blit(text, (1050,655))
+    screen.blit(text, (1050,655))    
+
+    clock.tick(s)
+
+
+
+
+            
+
+    if (generation > 1 and lineage_last == False) or (generation == 1) :
+        status = dft(status,status2)
+    
+    else:
+        status = start()
+        status2 = status[:]
+        generation = 1
+        lineage_last = False
+    
 
     for i in range(0,len(status)):
         if status[i] == 1:
@@ -330,8 +341,9 @@ while not done:
 
     pygame.display.flip()
 
+    if lineage_last == False:
+        generation +=1
 
-    generation +=1
 
    
     if [1,2] == [1, 2]:
