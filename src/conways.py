@@ -228,14 +228,15 @@ while not done:
  
     # --- Drawing code should go here
 
-  
-    
+    mouse = pygame.mouse.get_pos()
+
+
 
     # --- Go ahead and update the screen with what we've drawn.
  
     # --- Limit to 5 frames per second
 
-    s = 1
+    s = 10
     clock.tick(s)
 
 
@@ -253,60 +254,51 @@ while not done:
         lineage_last = False
     
 
+    if 972 + 51 > mouse[0] > 972 and 647 + 46 > mouse[1] > 647:
+        pygame.draw.rect(screen, BLACK, pygame.Rect(972,647,51,46))
+        pygame.draw.rect(screen, YELLOW, pygame.Rect(975,650,45,40))
+        font = pygame.font.SysFont("Arial", 25)
+        text = font.render('+', 1, BLACK)
+        screen.blit(text, (990,655))
 
+    else:
+        pygame.draw.rect(screen, YELLOW, pygame.Rect(972,647,51,46))
+        pygame.draw.rect(screen, BLACK, pygame.Rect(975,650,45,40))
+        font = pygame.font.SysFont("Arial", 25)
+        text = font.render('+', 1, YELLOW)
+        screen.blit(text, (990,655))
 
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(22,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(25,650,200,40))
+    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3, txt):
+        if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1:
+            pygame.draw.rect(screen, BLACK, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, YELLOW, pygame.Rect(x2,y2,w2,h2))
+            font = pygame.font.SysFont("Arial", 25)
+            text = font.render(txt, 1, BLACK)
+            screen.blit(text, (x3,y3))
 
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Restart', 1, YELLOW)
-    screen.blit(text, (50,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(222,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(225,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Rewind', 1, YELLOW)
-    screen.blit(text, (250,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(422,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(425,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Loop', 1, YELLOW)
-    screen.blit(text, (450,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(622,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(625,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Pause', 1, YELLOW)
-    screen.blit(text, (650,655))
+        else:
+            pygame.draw.rect(screen, YELLOW, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, BLACK, pygame.Rect(x2,y2,w2,h2))
+            font = pygame.font.SysFont("Arial", 25)
+            text = font.render(txt, 1, YELLOW)
+            screen.blit(text, (x3,y3))
+    
+    button_func(22,647,206,46,25,650,200,40,50,655, 'Restart')
+    button_func(222,647,206,46,225,650,200,40,250,655, 'Rewind')
+    button_func(422,647,206,46,425,650,200,40,450,655, 'Loop')
+    button_func(622,647,206,46,625,650,200,40,650,655, 'Pause')
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,106,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,100,40))
-
     font = pygame.font.SysFont("Arial", 25)
     text = font.render('Speed', 1, YELLOW)
     screen.blit(text, (840,655))
 
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(922,647,51,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(925,650,45,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('-', 1, YELLOW)
-    screen.blit(text, (940,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(972,647,51,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(975,650,45,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('+', 1, YELLOW)
-    screen.blit(text, (990,655))
+    button_func(922,647,51,46,925,650,45,40,940,655, '-')
+    button_func(972,647,51,46,975,650,45,40,990,655, '+')
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
-
     font = pygame.font.SysFont("Arial", 25)
     text = font.render(f'Generation: {generation}', 1, YELLOW)
     screen.blit(text, (1050,655))
