@@ -268,7 +268,8 @@ while not done:
 
 
     def restart():
-        global status, status2, generation, lineage_last
+        global status, status2, generation, lineage_last, paused
+        paused = False
         status = start()
         status2 = status[:]
         generation = 1
@@ -283,18 +284,25 @@ while not done:
         else:
             paused = True
 
+    def loop():
+        global looping
+        if looping == True:
+            looping = False
+        
+        else:
+            looping = True
 
-    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None):
+
+    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None, l=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1:
+        if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1 or l == True:
             pygame.draw.rect(screen, BLACK, pygame.Rect(x1,y1,w1,h1))
             pygame.draw.rect(screen, YELLOW, pygame.Rect(x2,y2,w2,h2))
             font = pygame.font.SysFont("Arial", 25)
             text = font.render(txt, 1, BLACK)
             screen.blit(text, (x3,y3))
             if click[0] == 1 and action != None:
-                clock.tick(10)
                 action()
                 
 
@@ -307,7 +315,7 @@ while not done:
     
     button_func(22,647,206,46,25,650,200,40,50,655, 'Restart', restart)
     button_func(222,647,206,46,225,650,200,40,250,655, 'Rewind')
-    button_func(422,647,206,46,425,650,200,40,450,655, 'Loop')
+    button_func(422,647,206,46,425,650,200,40,450,655, 'Loop', loop, looping)
     if paused == False:
         button_func(622,647,206,46,625,650,200,40,650,655, 'Pause', pauser)
     
@@ -341,10 +349,11 @@ while not done:
         status = dft(status,status2, paused)
     
     else:
-        status = start()
-        status2 = status[:]
-        generation = 1
-        lineage_last = False
+        if looping == True:
+            status = start()
+            status2 = status[:]
+            generation = 1
+            lineage_last = False
     
 
     if paused == False:
@@ -370,12 +379,6 @@ while not done:
         generation +=1
 
 
-   
-    if [1,2] == [1, 2]:
-        pygame.display.set_caption(f'Generation {generation}')
-
-    else:
-        pygame.display.set_caption(f'Generation X')
 
 
 
