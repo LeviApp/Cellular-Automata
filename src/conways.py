@@ -168,50 +168,56 @@ for item in wildfire:
     else:
         wildFireGraph[item.ID] = {item.ID-1, item.ID+1, item.ID-row_count, item.ID-row_minus, item.ID+row_count, item.ID+row_plus}
 
-def dft(before, after):
+def dft(before, after, p):
     """
     Print each vertex in depth-first order
     beginning from starting_vertex.
     """
+    global status
     global lineage_last
-    depth = Stack()
-    visited = []
-    fires_burning = 0
-    depth.push(0)
-    while depth.size():
-        node = depth.pop()
-        visited.append(node)
+
+    if p == False:
+        depth = Stack()
+        visited = []
+        fires_burning = 0
+        depth.push(0)
+        while depth.size():
+            node = depth.pop()
+            visited.append(node)
 
 
-        for neighbor in wildFireGraph[node]:
-            if neighbor not in visited and neighbor not in depth.stack:
-                depth.push(neighbor)
+            for neighbor in wildFireGraph[node]:
+                if neighbor not in visited and neighbor not in depth.stack:
+                    depth.push(neighbor)
 
-        for neighbor in wildFireGraph[node]:
-            if before[neighbor] == 1:
-                fires_burning+=1
+            for neighbor in wildFireGraph[node]:
+                if before[neighbor] == 1:
+                    fires_burning+=1
 
-        if before[node] == 1:
-            if fires_burning in [2,3]:
-                after[node] = 1
+            if before[node] == 1:
+                if fires_burning in [2,3]:
+                    after[node] = 1
+                else:
+                    after[node] = 0
             else:
-                after[node] = 0
-        else:
-            if fires_burning == 3:
-                after[node] = 1
-            else:
-                after[node] = 0
-        fires_burning = 0         
+                if fires_burning == 3:
+                    after[node] = 1
+                else:
+                    after[node] = 0
+            fires_burning = 0         
 
-    lineage.append(after)
-    if status == status2 and generation != 1:
-        lineage_last = True
+        lineage.append(after)
+        if status == status2 and generation != 1:
+            lineage_last = True
 
-    return after
+        return after
+    else:
+        status = lineage[-1]
+
 
 s = 5
 looping = False
-
+paused = False
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -269,7 +275,13 @@ while not done:
         lineage_last = False
     
 
-
+    def pauser():
+        global paused
+        if paused == True:
+            paused = False
+        
+        else:
+            paused = True
 
 
     def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None):
@@ -296,7 +308,12 @@ while not done:
     button_func(22,647,206,46,25,650,200,40,50,655, 'Restart', restart)
     button_func(222,647,206,46,225,650,200,40,250,655, 'Rewind')
     button_func(422,647,206,46,425,650,200,40,450,655, 'Loop')
-    button_func(622,647,206,46,625,650,200,40,650,655, 'Pause')
+    if paused == False:
+        button_func(622,647,206,46,625,650,200,40,650,655, 'Pause', pauser)
+    
+    else:
+        button_func(622,647,206,46,625,650,200,40,650,655, 'Play', pauser)
+ 
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,106,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,100,40))
@@ -321,7 +338,7 @@ while not done:
             
 
     if (generation > 1 and lineage_last == False) or (generation == 1) :
-        status = dft(status,status2)
+        status = dft(status,status2, paused)
     
     else:
         status = start()
@@ -330,18 +347,26 @@ while not done:
         lineage_last = False
     
 
-    for i in range(0,len(status)):
-        if status[i] == 1:
-            wildfire[i].createFire(YELLOW)
-        else:
-            wildfire[i].createFire(BLACK)
+    if paused == False:
+        for i in range(0,len(status)):
+            if status[i] == 1:
+                wildfire[i].createFire(YELLOW)
+            else:
+                wildfire[i].createFire(BLACK)
     
+    else:
+        status = lineage[-1]
+        for i in range(0,len(status)):
+            if status[i] == 1:
+                wildfire[i].createFire(YELLOW)
+            else:
+                wildfire[i].createFire(BLACK)
 
     status2 = status[:]
 
     pygame.display.flip()
 
-    if lineage_last == False:
+    if lineage_last == False and paused == False:
         generation +=1
 
 
