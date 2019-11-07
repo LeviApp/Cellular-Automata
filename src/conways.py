@@ -122,6 +122,7 @@ for i in range(0, 301):
 fiery_start = list(set(fiery_start))
 
 
+
 def start():
     status = []
     for i in range(0,len(wildfire)):
@@ -313,15 +314,19 @@ while not done:
             text = font.render(txt, 1, YELLOW)
             screen.blit(text, (x3,y3))
     
-    button_func(22,647,206,46,25,650,200,40,50,655, 'Restart', restart)
-    button_func(222,647,206,46,225,650,200,40,250,655, 'Rewind')
-    button_func(422,647,206,46,425,650,200,40,450,655, 'Loop', loop, looping)
+    button_func(22,647,126,46,25,650,120,40,35,655, 'Restart', restart)
+    button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind')
+    button_func(268,647,126,46,271,650,120,40,275,655, 'Loop', loop, looping)
     if paused == False:
-        button_func(622,647,206,46,625,650,200,40,650,655, 'Pause', pauser)
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Pause', pauser)
     
     else:
-        button_func(622,647,206,46,625,650,200,40,650,655, 'Play', pauser)
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Play', pauser)
  
+    button_func(514,647,126,46,517,650,120,40,524,655, 'Random')
+    button_func(637,647,126,46,640,650,120,40,644,655, 'Color')
+    button_func(760,647,65,46,763,650,60,40,940,655, '-', slow_down)
+
 
     pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,106,46))
     pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,100,40))
