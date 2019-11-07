@@ -293,7 +293,13 @@ while not done:
         else:
             looping = True
 
-
+    def rand():
+        global fiery_start
+        fiery_start = []
+        for i in range(0, 301):
+            fiery_start.append(random.randint(0,629))    
+        fiery_start = list(set(fiery_start))
+        restart()
     def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None, l=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -323,7 +329,7 @@ while not done:
     else:
         button_func(391,647,126,46,394,650,120,40,395,655, 'Play', pauser)
  
-    button_func(514,647,126,46,517,650,120,40,524,655, 'Random')
+    button_func(514,647,126,46,517,650,120,40,524,655, 'Random', rand)
     button_func(637,647,126,46,640,650,120,40,644,655, 'Color')
     button_func(760,647,65,46,763,650,60,40,940,655, '-', slow_down)
 
