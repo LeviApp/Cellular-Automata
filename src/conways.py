@@ -93,6 +93,7 @@ w=0
 x=10
 y=10
 generation = 1
+last_generation = 1
 
 while y < WIN_H-60:
 
@@ -119,6 +120,7 @@ for i in range(0, 301):
     fiery_start.append(random.randint(0,629))
 
 fiery_start = list(set(fiery_start))
+
 
 
 def start():
@@ -167,48 +169,56 @@ for item in wildfire:
     else:
         wildFireGraph[item.ID] = {item.ID-1, item.ID+1, item.ID-row_count, item.ID-row_minus, item.ID+row_count, item.ID+row_plus}
 
-def dft(before, after):
+def dft(before, after, p):
     """
     Print each vertex in depth-first order
     beginning from starting_vertex.
     """
+    global status
     global lineage_last
-    depth = Stack()
-    visited = []
-    fires_burning = 0
-    depth.push(0)
-    while depth.size():
-        node = depth.pop()
-        visited.append(node)
+
+    if p == False:
+        depth = Stack()
+        visited = []
+        fires_burning = 0
+        depth.push(0)
+        while depth.size():
+            node = depth.pop()
+            visited.append(node)
 
 
-        for neighbor in wildFireGraph[node]:
-            if neighbor not in visited and neighbor not in depth.stack:
-                depth.push(neighbor)
+            for neighbor in wildFireGraph[node]:
+                if neighbor not in visited and neighbor not in depth.stack:
+                    depth.push(neighbor)
 
-        for neighbor in wildFireGraph[node]:
-            if before[neighbor] == 1:
-                fires_burning+=1
+            for neighbor in wildFireGraph[node]:
+                if before[neighbor] == 1:
+                    fires_burning+=1
 
-        if before[node] == 1:
-            if fires_burning in [2,3]:
-                after[node] = 1
+            if before[node] == 1:
+                if fires_burning in [2,3]:
+                    after[node] = 1
+                else:
+                    after[node] = 0
             else:
-                after[node] = 0
-        else:
-            if fires_burning == 3:
-                after[node] = 1
-            else:
-                after[node] = 0
-        fires_burning = 0         
+                if fires_burning == 3:
+                    after[node] = 1
+                else:
+                    after[node] = 0
+            fires_burning = 0         
 
-    lineage.append(after)
-    if status == status2 and generation != 1:
-        lineage_last = True
+        lineage.append(after)
+        if status == status2 and generation != 1:
+            lineage_last = True
 
-    return after
+        return after
+    else:
+        status = lineage[-1]
 
 
+s = 5
+looping = False
+paused = False
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -228,13 +238,118 @@ while not done:
  
     # --- Drawing code should go here
 
-  
-    
+
+
 
     # --- Go ahead and update the screen with what we've drawn.
  
     # --- Limit to 5 frames per second
-    clock.tick(10)
+
+    def speed_up():
+        global s
+        if s < 20 and s >=1:
+            s+=1
+        elif s < 1:
+            s = round(s + 0.1, 1)
+
+        else:
+            s = 20
+    
+
+    def slow_down():
+        global s
+        if s >= 2:
+            s-=1
+        
+        elif s >= 0.3 and s <= 1:
+            s = round(s - 0.1, 1)
+        
+        else:
+            s = 0.2
+
+
+    def restart():
+        global status, status2, generation, lineage_last, paused
+        paused = False
+        status = start()
+        status2 = status[:]
+        generation = 1
+        lineage_last = False
+    
+
+    def pauser():
+        global paused
+        if paused == True:
+            paused = False
+        
+        else:
+            paused = True
+
+    def loop():
+        global looping
+        if looping == True:
+            looping = False
+        
+        else:
+            looping = True
+
+    def rand():
+        global fiery_start
+        fiery_start = []
+        for i in range(0, 301):
+            fiery_start.append(random.randint(0,629))    
+        fiery_start = list(set(fiery_start))
+        restart()
+    def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None, l=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1 or l == True:
+            pygame.draw.rect(screen, BLACK, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, YELLOW, pygame.Rect(x2,y2,w2,h2))
+            font = pygame.font.SysFont("Arial", 25)
+            text = font.render(txt, 1, BLACK)
+            screen.blit(text, (x3,y3))
+            if click[0] == 1 and action != None:
+                action()
+                
+
+        else:
+            pygame.draw.rect(screen, YELLOW, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, BLACK, pygame.Rect(x2,y2,w2,h2))
+            font = pygame.font.SysFont("Arial", 25)
+            text = font.render(txt, 1, YELLOW)
+            screen.blit(text, (x3,y3))
+    
+    button_func(22,647,126,46,25,650,120,40,35,655, 'Restart', restart)
+    button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind')
+    button_func(268,647,126,46,271,650,120,40,275,655, 'Loop', loop, looping)
+    if paused == False:
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Pause', pauser)
+    
+    else:
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Play', pauser)
+ 
+    button_func(514,647,126,46,517,650,120,40,524,655, 'Random', rand)
+    button_func(637,647,126,46,640,650,120,40,644,655, 'Color')
+    button_func(760,647,65,46,763,650,60,40,940,655, '-', slow_down)
+
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,106,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,100,40))
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render('Speed', 1, YELLOW)
+    screen.blit(text, (840,655))
+
+    button_func(922,647,51,46,925,650,45,40,940,655, '-', slow_down)
+    button_func(972,647,51,46,975,650,45,40,990,655, '+', speed_up)
+
+    pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
+    font = pygame.font.SysFont("Arial", 25)
+    text = font.render(f'Generation: {generation}', 1, YELLOW)
+    screen.blit(text, (1050,655))    
+
+    clock.tick(s)
 
 
 
@@ -242,79 +357,39 @@ while not done:
             
 
     if (generation > 1 and lineage_last == False) or (generation == 1) :
-        status = dft(status,status2)
+        status = dft(status,status2, paused)
     
     else:
-        status = start()
-        status2 = status[:]
-        generation = 1
-        lineage_last = False
+        if looping == True:
+            status = start()
+            status2 = status[:]
+            generation = 1
+            lineage_last = False
     
 
-
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(22,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(25,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Restart', 1, YELLOW)
-    screen.blit(text, (50,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(222,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(225,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Rewind', 1, YELLOW)
-    screen.blit(text, (250,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(422,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(425,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Loop', 1, YELLOW)
-    screen.blit(text, (450,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(622,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(625,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Pause', 1, YELLOW)
-    screen.blit(text, (650,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(822,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(825,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Speed   -   +', 1, YELLOW)
-    screen.blit(text, (850,655))
-
-    pygame.draw.rect(screen, YELLOW, pygame.Rect(1022,647,206,46))
-    pygame.draw.rect(screen, BLACK, pygame.Rect(1025,650,200,40))
-
-    font = pygame.font.SysFont("Arial", 25)
-    text = font.render(f'Generation: {generation}', 1, YELLOW)
-    screen.blit(text, (1050,655))
-
-    for i in range(0,len(status)):
-        if status[i] == 1:
-            wildfire[i].createFire(YELLOW)
-        else:
-            wildfire[i].createFire(BLACK)
+    if paused == False:
+        for i in range(0,len(status)):
+            if status[i] == 1:
+                wildfire[i].createFire(YELLOW)
+            else:
+                wildfire[i].createFire(BLACK)
     
+    else:
+        status = lineage[-1]
+        for i in range(0,len(status)):
+            if status[i] == 1:
+                wildfire[i].createFire(YELLOW)
+            else:
+                wildfire[i].createFire(BLACK)
 
     status2 = status[:]
 
     pygame.display.flip()
 
+    if lineage_last == False and paused == False:
+        generation +=1
 
-    generation +=1
 
-   
-    if [1,2] == [1, 2]:
-        pygame.display.set_caption(f'Generation {generation}')
-
-    else:
-        pygame.display.set_caption(f'Generation X')
 
 
 
