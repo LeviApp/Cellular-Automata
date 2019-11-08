@@ -39,7 +39,7 @@ GREEN = (21,180,0)
 ACTIVE = (255,255,0)
 WIN_W = 1250
 WIN_H = 700
-colorChoice = 0
+choice = 0
 
 [(0, 0, 0), (0, 0, 0), (255,255,0)]
 
@@ -53,15 +53,15 @@ class COLOR:
         self.TEXT = TEXT
 
 
-# defaultCS = COLOR((0, 0, 0), (0, 0, 0), (255,255,0), (0, 0, 0), (255,255,0), (255,255,0))
-# goldCS = COLOR((255, 255, 255), (255, 255, 255), (255,215,0), (255, 255, 255), (255,215,0), (255,215,0))
-# USACS = COLOR((60, 59, 110), (255, 255, 255), (178, 34, 52), (255,255,255), (60, 59, 110), (60, 59, 110) )
-# GermanyCS = COLOR((255, 206, 0), (0, 0, 0), (221, 0, 0), (0,0,0), (255, 206, 0), (255, 206, 0) )
-# greenCS = COLOR((0, 0, 0), (0, 0, 0), (57,255,21), (0, 0, 0), (57,255,21), (57,255,21))
-# redCS = COLOR((0, 0, 0), (0, 0, 0), (255,0,0), (0, 0, 0), (255,0,0), (255,0,0))
-# oceanCS = COLOR((0, 0, 0), (0,0,255), (0,255,255), (0, 0, 0), (0,255,255), (0,255,255))
+defaultCS = COLOR((0, 0, 0), (0, 0, 0), (255,255,0), (0, 0, 0), (255,255,0), (255,255,0))
+goldCS = COLOR((255, 255, 255), (255, 255, 255), (255,215,0), (255, 255, 255), (255,215,0), (255,215,0))
+USACS = COLOR((60, 59, 110), (255, 255, 255), (178, 34, 52), (255,255,255), (60, 59, 110), (60, 59, 110) )
+GermanyCS = COLOR((255, 206, 0), (0, 0, 0), (221, 0, 0), (0,0,0), (255, 206, 0), (255, 206, 0) )
+greenCS = COLOR((0, 0, 0), (0, 0, 0), (57,255,21), (0, 0, 0), (57,255,21), (57,255,21))
+redCS = COLOR((0, 0, 0), (0, 0, 0), (255,0,0), (0, 0, 0), (255,0,0), (255,0,0))
+oceanCS = COLOR((0, 0, 0), (0,0,255), (0,255,255), (0, 0, 0), (0,255,255), (0,255,255))
 bwCS = COLOR((127,127,127), (0,0,0), (255,255,255), (255, 255, 255), (0, 0, 0), (0, 0, 0))
-# wbCS = COLOR((127,127,127), (255,255,255), (0,0,0), (255, 255, 255), (0, 0, 0), (0, 0, 0))
+wbCS = COLOR((127,127,127), (255,255,255), (0,0,0), (255, 255, 255), (0, 0, 0), (0, 0, 0))
 bbCS = COLOR((0,0,0), (0,0,0), (255,255,255), (0,0,0), (0,0,0), (255,255,255))
 wwCS = COLOR((255,255,255), (255,255,255), (0,0,0), (255,255,255), (255,255,255), (0,0,0))
 forestCS = COLOR((255,255,255), (255,255,255), (0,128,0), (0,128,0), (255, 255, 255), (255, 255, 255) )
@@ -73,9 +73,9 @@ strawberryCS = COLOR((255,204,229), (255,51,153), (153,0,76), (255,204,229), (15
 hotCS = COLOR((0,0,0), (0,0,0), (255,0,127), (0,0,0), (255,0,127), (255,0,127))
 broncoCS = COLOR((0,34,68), (251,79,20), (0,34,68), (0,0,0), (251,79,20), (251,79,20) )
 woodCS = COLOR((210,180,140), (150,75,0), (210,180,140), (255,255,255), (150,75,0), (150,75,0))
+colorSchemes = [defaultCS, goldCS, USACS, GermanyCS, greenCS, redCS, oceanCS, bwCS, wbCS, bbCS, wwCS, forestCS, trafficCS, burnCS, warmCS, plumCS, strawberryCS, hotCS, broncoCS, woodCS]
 
 
-(0,128,0)
 
 pygame.init()
 
@@ -130,11 +130,10 @@ w=0
 x=10
 y=10
 generation = 1
-last_generation = 1
 
 while y < WIN_H-60:
 
-    fire = Fire(w, screen, woodCS.BACKGROUND,x,y,20,20)
+    fire = Fire(w, screen, BACKGROUND,x,y,20,20)
     wildfire.append(fire)
 
 
@@ -254,11 +253,18 @@ def dft(before, after, p):
 
 
 s = 5
-looping = False
+looping = True
 paused = False
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
+    BACKGROUND = colorSchemes[choice].BACKGROUND
+    BBACKGROUND = colorSchemes[choice].BBACKGROUND
+    ACTIVE = colorSchemes[choice].ACTIVE
+    INACTIVE = colorSchemes[choice].INACTIVE
+    BSTROKE = colorSchemes[choice].BSTROKE
+    TEXT = colorSchemes[choice].TEXT
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -271,7 +277,7 @@ while not done:
  
     # Here, we clear the screen to gray. Don't put other drawing commands
     # above this, or they will be erased with this command.
-    screen.fill(woodCS.BACKGROUND)
+    screen.fill(BACKGROUND)
  
     # --- Drawing code should go here
 
@@ -337,25 +343,41 @@ while not done:
             fiery_start.append(random.randint(0,629))    
         fiery_start = list(set(fiery_start))
         restart()
+    
+    def colorChanger():
+        pygame.time.delay(1000)
+        global choice
+        if choice == 19:
+            choice = 0
+        else:
+            choice+=1
+
     def button_func(x1,y1,w1,h1,x2,y2,w2,h2,x3,y3,txt, action=None, l=None):
+        global looping
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if x1 + w1 > mouse[0] > x1 and y1 + h1 > mouse[1] > y1 or l == True:
-            pygame.draw.rect(screen, woodCS.BBACKGROUND, pygame.Rect(x1,y1,w1,h1))
-            pygame.draw.rect(screen, woodCS.TEXT, pygame.Rect(x2,y2,w2,h2))
+            pygame.draw.rect(screen, BBACKGROUND, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, TEXT, pygame.Rect(x2,y2,w2,h2))
             font = pygame.font.SysFont("Arial", 25)
-            text = font.render(txt, 1, woodCS.BBACKGROUND)
-            screen.blit(text, (x3,y3))
+            textS = font.render(txt, 1, BBACKGROUND)
+            textR = textS.get_rect()
+            textR.center = ((x1 + (w1/2)), (y1 + (h1/2)))
+            screen.blit(textS, textR)
             if click[0] == 1 and action != None:
                 action()
                 
 
         else:
-            pygame.draw.rect(screen, woodCS.BSTROKE, pygame.Rect(x1,y1,w1,h1))
-            pygame.draw.rect(screen, woodCS.BBACKGROUND, pygame.Rect(x2,y2,w2,h2))
+            pygame.draw.rect(screen, BSTROKE, pygame.Rect(x1,y1,w1,h1))
+            pygame.draw.rect(screen, BBACKGROUND, pygame.Rect(x2,y2,w2,h2))
             font = pygame.font.SysFont("Arial", 25)
-            text = font.render(txt, 1, woodCS.TEXT)
-            screen.blit(text, (x3,y3))
+            textS = font.render(txt, 1, TEXT)
+            textR = textS.get_rect()
+            textR.center = ((x1 + (w1/2)), (y1 + (h1/2)))
+            screen.blit(textS, textR)
+
+
     
     button_func(22,647,126,46,25,650,120,40,35,655, 'Restart', restart)
     button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind')
@@ -367,24 +389,27 @@ while not done:
         button_func(391,647,126,46,394,650,120,40,395,655, 'Play', pauser)
  
     button_func(514,647,126,46,517,650,120,40,524,655, 'Random', rand)
-    button_func(637,647,126,46,640,650,120,40,644,655, 'Color')
-    button_func(760,647,65,46,763,650,60,40,940,655, '-', slow_down)
+    button_func(637,647,190,46,640,650,184,40,644,655, 'Color Scheme', colorChanger)
 
 
-    pygame.draw.rect(screen, woodCS.BSTROKE, pygame.Rect(822,647,106,46))
-    pygame.draw.rect(screen, woodCS.BBACKGROUND, pygame.Rect(825,650,100,40))
+    pygame.draw.rect(screen, BSTROKE, pygame.Rect(822,647,106,46))
+    pygame.draw.rect(screen, BBACKGROUND, pygame.Rect(825,650,100,40))
     font = pygame.font.SysFont("Arial", 25)
-    text = font.render('Speed', 1, woodCS.TEXT)
-    screen.blit(text, (840,655))
+    textS = font.render('Speed', 1, TEXT)
+    textR = textS.get_rect()
+    textR.center = ((822 + 53), (647 + 23))
+    screen.blit(textS, textR) 
 
-    button_func(922,647,51,46,925,650,45,40,940,655, '-', slow_down)
-    button_func(972,647,51,46,975,650,45,40,990,655, '+', speed_up)
+    button_func(922,647,55,46,925,650,49,40,940,655, '-', slow_down)
+    button_func(972,647,55,46,975,650,49,40,990,655, '+', speed_up)
 
-    pygame.draw.rect(screen, woodCS.BSTROKE, pygame.Rect(1022,647,206,46))
-    pygame.draw.rect(screen, woodCS.BBACKGROUND, pygame.Rect(1025,650,200,40))
+    pygame.draw.rect(screen, BSTROKE, pygame.Rect(1022,647,206,46))
+    pygame.draw.rect(screen, BBACKGROUND, pygame.Rect(1025,650,200,40))
     font = pygame.font.SysFont("Arial", 25)
-    text = font.render(f'Generation: {generation}', 1, woodCS.TEXT)
-    screen.blit(text, (1050,655))    
+    textS = font.render(f'Generation: {generation}', 1, TEXT)
+    textR = textS.get_rect()
+    textR.center = ((1022 + 103), (647 + 23))
+    screen.blit(textS, textR) 
 
     clock.tick(s)
 
@@ -407,24 +432,25 @@ while not done:
     if paused == False:
         for i in range(0,len(status)):
             if status[i] == 1:
-                wildfire[i].createFire(woodCS.ACTIVE)
+                wildfire[i].createFire(ACTIVE)
             else:
-                wildfire[i].createFire(woodCS.INACTIVE)
+                wildfire[i].createFire(INACTIVE)
     
     else:
         status = lineage[-1]
         for i in range(0,len(status)):
             if status[i] == 1:
-                wildfire[i].createFire(woodCS.ACTIVE)
+                wildfire[i].createFire(ACTIVE)
             else:
-                wildfire[i].createFire(woodCS.INACTIVE)
+                wildfire[i].createFire(INACTIVE)
 
     status2 = status[:]
 
-    pygame.display.flip()
-
     if lineage_last == False and paused == False:
         generation +=1
+
+    pygame.display.flip()
+
 
 
 
