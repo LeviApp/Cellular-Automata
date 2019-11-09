@@ -54,7 +54,7 @@ class COLOR:
 
 
 defaultCS = COLOR((0, 0, 0), (0, 0, 0), (255,255,0), (0, 0, 0), (255,255,0), (255,255,0))
-goldCS = COLOR((255, 255, 255), (255, 255, 255), (255,215,0), (255, 255, 255), (255,215,0), (255,215,0))
+goldCS = COLOR((255, 255, 255), (255, 255, 255), (255,215,0), (255,215,0), (255, 255, 255), (0, 0, 0))
 USACS = COLOR((60, 59, 110), (255, 255, 255), (178, 34, 52), (255,255,255), (60, 59, 110), (60, 59, 110) )
 GermanyCS = COLOR((255, 206, 0), (0, 0, 0), (221, 0, 0), (0,0,0), (255, 206, 0), (255, 206, 0) )
 greenCS = COLOR((0, 0, 0), (0, 0, 0), (57,255,21), (0, 0, 0), (57,255,21), (57,255,21))
@@ -177,6 +177,11 @@ row_minus = 34
 row_plus = 36
 circle_total = 629
 circle_startend = 595
+s = 5
+r = 0
+looping = True
+paused = False
+rewinding = False
 
 for item in wildfire:
 
@@ -252,9 +257,6 @@ def dft(before, after, p):
         status = lineage[-1]
 
 
-s = 5
-looping = True
-paused = False
 # -------- Main Program Loop -----------
 while not done:
     # --- Main event loop
@@ -272,35 +274,21 @@ while not done:
     # --- Game logic should go here
     
 
-    
-    # --- Screen-clearing code goes here
- 
-    # Here, we clear the screen to gray. Don't put other drawing commands
-    # above this, or they will be erased with this command.
-    screen.fill(BACKGROUND)
- 
-    # --- Drawing code should go here
-
-
-
-
-    # --- Go ahead and update the screen with what we've drawn.
- 
-    # --- Limit to 5 frames per second
-
     def speed_up():
-        global s
-        if s < 20 and s >=1:
-            s+=1
-        elif s < 1:
-            s = round(s + 0.1, 1)
+            global s
+            loop()
+            if s < 20 and s >=1:
+                s+=1
+            elif s < 1:
+                s = round(s + 0.1, 1)
 
-        else:
-            s = 20
+            else:
+                s = 20
     
 
     def slow_down():
         global s
+        loop()
         if s >= 2:
             s-=1
         
@@ -312,16 +300,24 @@ while not done:
 
 
     def restart():
-        global status, status2, generation, lineage_last, paused
+        global status, status2, generation, lineage_last, paused, lineage, rewinding, r
         paused = False
-        status = start()
-        status2 = status[:]
-        generation = 1
-        lineage_last = False
+        if rewinding == False:
+            status = start()
+            status2 = status[:]
+            generation = 1
+            lineage_last = False
+            lineage = [status]
+        
+        else:
+            r = 0
+            generation = len(lineage)
     
 
     def pauser():
         global paused
+        loop()
+        pygame.time.delay(1000)
         if paused == True:
             paused = False
         
@@ -337,7 +333,9 @@ while not done:
             looping = True
 
     def rand():
-        global fiery_start
+        global fiery_start, rewinding, r
+        rewinding = False
+        r = 0
         fiery_start = []
         for i in range(0, 301):
             fiery_start.append(random.randint(0,629))    
@@ -345,6 +343,7 @@ while not done:
         restart()
     
     def colorChanger():
+        loop()
         pygame.time.delay(1000)
         global choice
         if choice == 19:
@@ -377,16 +376,51 @@ while not done:
             textR.center = ((x1 + (w1/2)), (y1 + (h1/2)))
             screen.blit(textS, textR)
 
+    def rewinder():
+        global rewinding
+        pygame.time.delay(1000)
+        if rewinding == True:
+            rewinding = False
+            restart()
+        
+        else:
+            rewinding = True
+            restart()
+    
+    # --- Screen-clearing code goes here
+ 
+    # Here, we clear the screen to gray. Don't put other drawing commands
+    # above this, or they will be erased with this command.
+    screen.fill(BACKGROUND)
+ 
+    # --- Drawing code should go here
 
-    
+
+
+
+    # --- Go ahead and update the screen with what we've drawn.
+ 
+    # --- Limit to 5 frames per second
     button_func(22,647,126,46,25,650,120,40,35,655, 'Restart', restart)
-    button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind')
-    button_func(268,647,126,46,271,650,120,40,275,655, 'Loop', loop, looping)
-    if paused == False:
-        button_func(391,647,126,46,394,650,120,40,395,655, 'Pause', pauser)
-    
+
+    if rewinding == True:
+            button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind', rewinder)
+            pygame.draw.rect(screen, BBACKGROUND, pygame.Rect(145,647,126,46))
+            pygame.draw.rect(screen, TEXT, pygame.Rect(148,650,120,40))
+            font = pygame.font.SysFont("Arial", 25)
+            textS = font.render('Rewind', 1, BBACKGROUND)
+            textR = textS.get_rect()
+            textR.center = ((145 + (126/2)), (647 + (46/2)))
+            screen.blit(textS, textR)
     else:
-        button_func(391,647,126,46,394,650,120,40,395,655, 'Play', pauser)
+        button_func(145,647,126,46,148,650,120,40,155,655, 'Rewind', rewinder)
+
+    button_func(268,647,126,46,271,650,120,40,275,655, 'Loop', loop, looping)
+
+    if paused == False:
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Playing', pauser, paused)
+    else:
+        button_func(391,647,126,46,394,650,120,40,395,655, 'Paused', pauser, paused)
  
     button_func(514,647,126,46,517,650,120,40,524,655, 'Random', rand)
     button_func(637,647,190,46,640,650,184,40,644,655, 'Color Scheme', colorChanger)
@@ -414,42 +448,81 @@ while not done:
     clock.tick(s)
 
 
+    if rewinding == True and looping == True and r == len(lineage_r) - 1:
+        restart()
+    elif rewinding == True:
+        lineage_r = lineage[::-1]
+        status = lineage_r[r]
 
+        # if looping == True:
+        #         status = start()
+        #         status2 = status[:]
+        #         generation = 1
+        #         lineage_last = False
+        
 
-            
-
-    if (generation > 1 and lineage_last == False) or (generation == 1) :
-        status = dft(status,status2, paused)
-    
-    else:
-        if looping == True:
-            status = start()
-            status2 = status[:]
-            generation = 1
-            lineage_last = False
-    
-
-    if paused == False:
-        for i in range(0,len(status)):
-            if status[i] == 1:
-                wildfire[i].createFire(ACTIVE)
+        if paused == False:
+            for i in range(0,len(status)):
+                if status[i] == 1:
+                    wildfire[i].createFire(ACTIVE)
+                else:
+                    wildfire[i].createFire(INACTIVE)
+        
+        else:
+            if rewinding == False:
+                status = lineage[-1]
+                for i in range(0,len(status)):
+                    if status[i] == 1:
+                        wildfire[i].createFire(ACTIVE)
+                    else:
+                        wildfire[i].createFire(INACTIVE)
             else:
-                wildfire[i].createFire(INACTIVE)
-    
+                status = lineage_r[r]
+                for i in range(0,len(status)):
+                    if status[i] == 1:
+                        wildfire[i].createFire(ACTIVE)
+                    else:
+                        wildfire[i].createFire(INACTIVE)
+        if r != len(lineage_r) - 1 and paused == False:
+            generation -=1
+
+            r+=1
+
+        pygame.display.flip()
+
     else:
-        status = lineage[-1]
-        for i in range(0,len(status)):
-            if status[i] == 1:
-                wildfire[i].createFire(ACTIVE)
-            else:
-                wildfire[i].createFire(INACTIVE)
+        if (generation > 1 and lineage_last == False) or (generation == 1) :
+            status = dft(status,status2, paused)
+        
+        else:
+            if looping == True:
+                status = start()
+                status2 = status[:]
+                generation = 1
+                lineage_last = False
+                lineage = [status]
 
-    status2 = status[:]
+        if paused == False:
+            for i in range(0,len(status)):
+                if status[i] == 1:
+                    wildfire[i].createFire(ACTIVE)
+                else:
+                    wildfire[i].createFire(INACTIVE)
+        
+        else:
+            status = lineage[-1]
+            for i in range(0,len(status)):
+                if status[i] == 1:
+                    wildfire[i].createFire(ACTIVE)
+                else:
+                    wildfire[i].createFire(INACTIVE)
 
-    if lineage_last == False and paused == False:
-        generation +=1
+        status2 = status[:]
 
-    pygame.display.flip()
+        if lineage_last == False and paused == False:
+            generation +=1
+
+        pygame.display.flip()
 
 
 
